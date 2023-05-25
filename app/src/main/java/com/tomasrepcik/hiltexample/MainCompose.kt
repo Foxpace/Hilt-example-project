@@ -10,6 +10,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.tomasrepcik.hiltexample.app.AppState
 import com.tomasrepcik.hiltexample.app.ui.components.hiltexample.AppDrawerContent
 import com.tomasrepcik.hiltexample.app.ui.components.hiltexample.AppDrawerItemInfo
 import com.tomasrepcik.hiltexample.app.ui.theme.AppDrawerExampleTheme
@@ -20,41 +21,42 @@ import com.tomasrepcik.hiltexample.intro.introGraph
 fun MainCompose(
     navController: NavHostController = rememberNavController(),
     drawerState: DrawerState = rememberDrawerState(initialValue = DrawerValue.Closed),
-    isOnboardedState: Boolean
+    appState: AppState,
 ) {
     AppDrawerExampleTheme {
         Surface {
-            ModalNavigationDrawer(
-                drawerState = drawerState,
-                drawerContent = {
-                    AppDrawerContent(
-                        drawerState = drawerState,
-                        menuItems = DrawerParams.drawerButtons,
-                        defaultPick = MainNavOption.HomeScreen
-                    ) { onUserPickedOption ->
-                        when (onUserPickedOption) {
-                            MainNavOption.HomeScreen -> {
-                                navController.navigate(onUserPickedOption.name) {
-                                    popUpTo(NavRoutes.MainRoute.name)
-                                }
+            ModalNavigationDrawer(drawerState = drawerState, drawerContent = {
+                AppDrawerContent(
+                    drawerState = drawerState,
+                    menuItems = DrawerParams.drawerButtons,
+                    defaultPick = MainNavOption.HomeScreen
+                ) { onUserPickedOption ->
+                    when (onUserPickedOption) {
+                        MainNavOption.HomeScreen -> {
+                            navController.navigate(onUserPickedOption.name) {
+                                popUpTo(NavRoutes.MainRoute.name)
                             }
-                            MainNavOption.SettingsScreen -> {
-                                navController.navigate(onUserPickedOption.name) {
-                                    popUpTo(NavRoutes.MainRoute.name)
-                                }
+                        }
+
+                        MainNavOption.SettingsScreen -> {
+                            navController.navigate(onUserPickedOption.name) {
+                                popUpTo(NavRoutes.MainRoute.name)
                             }
-                            MainNavOption.AboutScreen -> {
-                                navController.navigate(onUserPickedOption.name) {
-                                    popUpTo(NavRoutes.MainRoute.name)
-                                }
+                        }
+
+                        MainNavOption.AboutScreen -> {
+                            navController.navigate(onUserPickedOption.name) {
+                                popUpTo(NavRoutes.MainRoute.name)
                             }
                         }
                     }
                 }
-            ) {
+            }) {
                 NavHost(
-                    navController,
-                    startDestination = if (isOnboardedState) NavRoutes.MainRoute.name else NavRoutes.IntroRoute.name
+                    navController, startDestination = when (appState) {
+                        AppState.NotOnboarded -> NavRoutes.IntroRoute.name
+                        AppState.Onboarded -> NavRoutes.MainRoute.name
+                    }
                 ) {
                     introGraph(navController)
                     mainGraph(drawerState)
@@ -65,8 +67,7 @@ fun MainCompose(
 }
 
 enum class NavRoutes {
-    IntroRoute,
-    MainRoute,
+    IntroRoute, MainRoute,
 }
 
 object DrawerParams {
@@ -76,14 +77,12 @@ object DrawerParams {
             R.string.text_home,
             R.drawable.ic_home,
             R.string.text_home_description
-        ),
-        AppDrawerItemInfo(
+        ), AppDrawerItemInfo(
             MainNavOption.SettingsScreen,
             R.string.text_settings,
             R.drawable.ic_settings,
             R.string.text_settings_description
-        ),
-        AppDrawerItemInfo(
+        ), AppDrawerItemInfo(
             MainNavOption.AboutScreen,
             R.string.text_about,
             R.drawable.ic_info,
@@ -95,5 +94,5 @@ object DrawerParams {
 @Preview
 @Composable
 fun MainActivityPreview() {
-    MainCompose(isOnboardedState = true)
+    MainCompose(appState = AppState.Onboarded)
 }

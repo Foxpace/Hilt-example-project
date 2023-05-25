@@ -1,10 +1,12 @@
 package com.tomasrepcik.hiltexample.intro
 
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.tomasrepcik.hiltexample.NavRoutes
+import com.tomasrepcik.hiltexample.app.AppViewModel
 import com.tomasrepcik.hiltexample.intro.composables.MotivationScreen
 import com.tomasrepcik.hiltexample.intro.composables.RecommendationScreen
 import com.tomasrepcik.hiltexample.intro.composables.WelcomeScreen
@@ -18,7 +20,10 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
             MotivationScreen(navController)
         }
         composable(IntroNavOption.RecommendationScreen.name){
-            RecommendationScreen(navController)
+            val viewModel: AppViewModel = hiltViewModel()
+            RecommendationScreen(navController){
+                viewModel.onEvent(it)
+            }
         }
     }
 }

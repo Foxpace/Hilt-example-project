@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.tomasrepcik.hiltexample.intro.IntroViewModel
+import com.tomasrepcik.hiltexample.app.AppViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -17,9 +17,9 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val vm: IntroViewModel = hiltViewModel()
+            val vm: AppViewModel = hiltViewModel()
             val isOnboardedState = vm.isOnboarded.collectAsState()
-            MainCompose(isOnboardedState = isOnboardedState.value)
+            MainCompose(appState = isOnboardedState.value)
         }
     }
 }

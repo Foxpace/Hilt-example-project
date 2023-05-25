@@ -4,27 +4,32 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.tomasrepcik.hiltexample.app.AppEvent
 import com.tomasrepcik.hiltexample.app.ui.components.appbar.AppBar
 
 @Composable
 fun HomeScreen(
-    drawerState: DrawerState,
+    drawerState: DrawerState, onEvent: (appEvent: AppEvent) -> Unit
 ) {
-    Scaffold(
-        topBar = { AppBar(drawerState = drawerState) }
-    ) {
+    Scaffold(topBar = { AppBar(drawerState = drawerState) }) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(it),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text("Home")
+            Button(onClick = { onEvent(AppEvent.SendMail) }) {
+                Text("Send mail")
+            }
         }
     }
 }
